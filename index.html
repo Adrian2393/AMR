@@ -6,17 +6,13 @@
   <title>Calendar EUFOR rot. II</title>
   <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Pacifico&display=swap" rel="stylesheet" />
   <style>
-    * {
-      box-sizing: border-box;
-    }
-
     body {
       font-family: Arial, sans-serif;
       background-color: #eef9f1;
       color: #1b3d1f;
       margin: 0;
       padding: 0;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      text-shadow: 0.5px 0.5px 0.5px rgba(0, 0, 0, 0.1);
     }
 
     header {
@@ -24,7 +20,6 @@
       color: white;
       padding: 30px 10px;
       text-align: center;
-      animation: fadeIn 1s ease-in;
     }
 
     .flags img {
@@ -35,7 +30,7 @@
 
     header p {
       font-family: 'Pacifico', cursive;
-      font-size: 24px;
+      font-size: 21px;
       margin-top: 10px;
     }
 
@@ -47,7 +42,6 @@
       padding: 10px;
       border-radius: 5px;
       font-size: 1.4rem;
-      animation: fadeIn 1s ease-in;
     }
 
     .month-section {
@@ -70,8 +64,6 @@
       font-size: 24px;
       font-family: "Trebuchet MS", sans-serif;
       position: relative;
-      animation: fadeIn 0.8s ease-in;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
     }
 
     .day.past::after {
@@ -87,16 +79,13 @@
       pointer-events: none;
       user-select: none;
       text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
     .day.today {
       outline: 3px solid #ff9900;
       outline-offset: -2px;
       box-shadow: 0 0 8px #ff9900aa;
-      font-weight: bold;
+      position: relative;
     }
 
     .day.today::before {
@@ -139,17 +128,48 @@
       font-family: Arial, sans-serif;
       user-select: none;
       pointer-events: none;
-      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
     }
 
-    #currentDayInfo,
-    #countdown {
+    #currentDayInfo {
       font-family: 'Georgia', serif;
       font-size: 22px;
       text-align: center;
       margin-top: 10px;
       color: #1b3d1f;
-      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+      font-weight: bold;
+    }
+
+    #motivation {
+      font-family: 'Pacifico', cursive;
+      font-size: 24px;
+      text-align: center;
+      margin-top: 5px;
+      color: #2e7d32;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+      animation: pulse 2.5s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.05);
+        opacity: 0.85;
+      }
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+    }
+
+    #countdown {
+      font-family: 'Georgia', serif;
+      font-size: 20px;
+      text-align: center;
+      margin-top: 5px;
+      color: #1b3d1f;
     }
 
     .weekday {
@@ -165,12 +185,6 @@
       text-align: center;
       padding: 20px;
       margin-top: 60px;
-      animation: fadeIn 1.5s ease-in;
-    }
-
-    @keyframes fadeIn {
-      from {opacity: 0;}
-      to {opacity: 1;}
     }
 
     @media (max-width: 600px) {
@@ -198,6 +212,7 @@
   </div>
 
   <div id="currentDayInfo"></div>
+  <div id="motivation">Keep going, you're doing great!</div>
   <div id="countdown"></div>
   <div id="calendarContainer"></div>
 
@@ -216,11 +231,17 @@
     const currentDay = daysPassed + 1;
     const daysLeft = Math.max(0, totalDays - currentDay);
 
-    document.getElementById("progressBarInner").style.width = `${daysPassed + 1} / ${totalDays}` * 100 + "%";
-    document.getElementById("progressBarInner").style.width = `${Math.min(100, Math.floor((currentDay / totalDays) * 100))}%`;
-    document.getElementById("progressBarText").textContent = `${currentDay} / ${totalDays} zile`;
+    const percent = Math.min(100, Math.floor((daysPassed / totalDays) * 100));
+    document.getElementById("progressBarInner").style.width = percent + "%";
+    document.getElementById("progressBarText").textContent = `${daysPassed} / ${totalDays} zile`;
 
-    document.getElementById("currentDayInfo").textContent = `A început ziua ${currentDay} / ${totalDays}. Keep going!`;
+    const formattedDate = today.toLocaleDateString('ro-RO', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+
+    document.getElementById("currentDayInfo").innerHTML = `Azi e <strong>${formattedDate}</strong>, ziua <strong>${currentDay} / ${totalDays}</strong>`;
     document.getElementById("countdown").textContent = `Au mai rămas ${daysLeft} zile`;
 
     const calendarContainer = document.getElementById("calendarContainer");
@@ -251,7 +272,8 @@
 
         const offset = (date.getDay() + 6) % 7;
         for (let i = 0; i < offset; i++) {
-          calendarGrid.appendChild(document.createElement("div"));
+          const empty = document.createElement("div");
+          calendarGrid.appendChild(empty);
         }
 
         monthSection.appendChild(calendarGrid);
@@ -266,7 +288,6 @@
         dayBox.classList.add("past");
       } else if (date.getTime() === today.getTime()) {
         dayBox.classList.add("today");
-        dayBox.style.fontWeight = "bold";
       }
 
       calendarGrid.appendChild(dayBox);
