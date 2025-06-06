@@ -4,26 +4,41 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Calendar EUFOR rot. II</title>
-  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Pacifico&display=swap" rel="stylesheet" />
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: Arial, sans-serif;
       background-color: #eef9f1;
       color: #1b3d1f;
       margin: 0;
       padding: 0;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
     }
+
     header {
       background-color: #2c5f2d;
       color: white;
       padding: 30px 10px;
       text-align: center;
+      animation: fadeIn 1s ease-in;
     }
+
     .flags img {
       height: 30px;
       margin: 0 10px;
       vertical-align: middle;
     }
+
+    header p {
+      font-family: 'Pacifico', cursive;
+      font-size: 24px;
+      margin-top: 10px;
+    }
+
     h2 {
       margin-top: 60px;
       margin-bottom: 20px;
@@ -32,17 +47,21 @@
       padding: 10px;
       border-radius: 5px;
       font-size: 1.4rem;
+      animation: fadeIn 1s ease-in;
     }
+
     .month-section {
       max-width: 1000px;
       margin: auto;
       padding: 0 10px 40px;
     }
+
     .calendar {
       display: grid;
       grid-template-columns: repeat(7, 1fr);
       gap: 5px;
     }
+
     .day {
       padding: 10px;
       border: 1px solid #1b3d1f;
@@ -51,7 +70,10 @@
       font-size: 24px;
       font-family: "Trebuchet MS", sans-serif;
       position: relative;
+      animation: fadeIn 0.8s ease-in;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
     }
+
     .day.past::after {
       content: "X";
       position: absolute;
@@ -69,12 +91,14 @@
       align-items: center;
       justify-content: center;
     }
+
     .day.today {
       outline: 3px solid #ff9900;
       outline-offset: -2px;
       box-shadow: 0 0 8px #ff9900aa;
-      position: relative;
+      font-weight: bold;
     }
+
     .day.today::before {
       content: "Azi";
       position: absolute;
@@ -87,6 +111,7 @@
       border-radius: 12px;
       font-weight: bold;
     }
+
     .progress-bar {
       position: relative;
       margin: 30px auto 10px;
@@ -96,12 +121,14 @@
       max-width: 90%;
       height: 30px;
     }
+
     .progress-bar-inner {
       height: 100%;
       background-color: #4caf50;
       width: 0%;
       transition: width 0.3s ease;
     }
+
     .progress-bar-text {
       position: absolute;
       top: 50%;
@@ -112,34 +139,40 @@
       font-family: Arial, sans-serif;
       user-select: none;
       pointer-events: none;
+      text-shadow: 1px 1px 3px rgba(0,0,0,0.3);
     }
-    #currentDayInfo {
+
+    #currentDayInfo,
+    #countdown {
       font-family: 'Georgia', serif;
       font-size: 22px;
       text-align: center;
       margin-top: 10px;
       color: #1b3d1f;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
     }
-    #countdown {
-      font-family: 'Georgia', serif;
-      font-size: 20px;
-      text-align: center;
-      margin-top: 5px;
-      color: #1b3d1f;
-    }
+
     .weekday {
       font-weight: bold;
       background-color: #a9dfbf;
       text-align: center;
       padding: 10px;
     }
+
     footer {
       background-color: #2c5f2d;
       color: white;
       text-align: center;
       padding: 20px;
       margin-top: 60px;
+      animation: fadeIn 1.5s ease-in;
     }
+
+    @keyframes fadeIn {
+      from {opacity: 0;}
+      to {opacity: 1;}
+    }
+
     @media (max-width: 600px) {
       .day {
         padding: 6px;
@@ -149,6 +182,7 @@
   </style>
 </head>
 <body>
+
   <header>
     <h1>Calendar EUFOR rot. II</h1>
     <div class="flags">
@@ -179,14 +213,14 @@
 
     const totalDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
     const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
-    const currentDay = Math.min(totalDays, daysPassed + 1);
+    const currentDay = daysPassed + 1;
     const daysLeft = Math.max(0, totalDays - currentDay);
 
-    const percent = Math.min(100, Math.floor((daysPassed / totalDays) * 100));
-    document.getElementById("progressBarInner").style.width = percent + "%";
-    document.getElementById("progressBarText").textContent = `${currentDay - 1} / ${totalDays} zile`;
+    document.getElementById("progressBarInner").style.width = `${daysPassed + 1} / ${totalDays}` * 100 + "%";
+    document.getElementById("progressBarInner").style.width = `${Math.min(100, Math.floor((currentDay / totalDays) * 100))}%`;
+    document.getElementById("progressBarText").textContent = `${currentDay} / ${totalDays} zile`;
 
-    document.getElementById("currentDayInfo").textContent = `Astăzi este ziua ${currentDay} / ${totalDays}`;
+    document.getElementById("currentDayInfo").textContent = `A început ziua ${currentDay} / ${totalDays}. Keep going!`;
     document.getElementById("countdown").textContent = `Au mai rămas ${daysLeft} zile`;
 
     const calendarContainer = document.getElementById("calendarContainer");
@@ -196,7 +230,6 @@
     let date = new Date(startDate);
     let currentMonth = -1;
     let calendarGrid;
-    let xCount = 0;
 
     while (date <= endDate) {
       if (date.getMonth() !== currentMonth) {
@@ -218,8 +251,7 @@
 
         const offset = (date.getDay() + 6) % 7;
         for (let i = 0; i < offset; i++) {
-          const empty = document.createElement("div");
-          calendarGrid.appendChild(empty);
+          calendarGrid.appendChild(document.createElement("div"));
         }
 
         monthSection.appendChild(calendarGrid);
@@ -232,16 +264,14 @@
 
       if (date < today) {
         dayBox.classList.add("past");
-        xCount++;
       } else if (date.getTime() === today.getTime()) {
         dayBox.classList.add("today");
+        dayBox.style.fontWeight = "bold";
       }
 
       calendarGrid.appendChild(dayBox);
       date.setDate(date.getDate() + 1);
     }
-
-    document.getElementById("progressBarText").textContent = `${xCount} / ${totalDays} zile`;
   </script>
 </body>
 </html>
