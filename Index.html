@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calendar EUFOR ROT II</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f3f3f3;
+      margin: 0;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    .progress-container {
+      background-color: #ddd;
+      border-radius: 20px;
+      overflow: hidden;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto 20px;
+      height: 30px;
+      position: relative;
+    }
+    .progress-bar {
+      height: 100%;
+      background-color: #4caf50;
+      transition: width 0.3s;
+    }
+    .progress-text {
+      position: absolute;
+      width: 100%;
+      text-align: center;
+      top: 0;
+      line-height: 30px;
+      font-weight: bold;
+      color: #333;
+    }
+    #currentDayInfo, #countdown {
+      text-align: center;
+      margin: 10px 0;
+      font-size: 18px;
+    }
+    .month-section {
+      margin: 20px auto;
+      max-width: 600px;
+      background-color: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+    .month-section h2 {
+      text-align: center;
+      margin-top: 0;
+    }
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      margin-top: 10px;
+    }
+    .calendar div {
+      text-align: center;
+      padding: 8px 0;
+      border-radius: 5px;
+    }
+    .weekday {
+      background-color: #eee;
+      font-weight: bold;
+    }
+    .day {
+      background-color: #fafafa;
+      border: 1px solid #ddd;
+    }
+    .past {
+      background-color: #cce5cc;
+    }
+    .today {
+      background-color: #ffeb3b;
+      font-weight: bold;
+      border: 2px solid #fbc02d;
+    }
+  </style>
+</head>
+<body>
+  <h1>Calendar EUFOR ROT II</h1>
+  <div class="progress-container">
+    <div class="progress-bar" id="progressBarInner"></div>
+    <div class="progress-text" id="progressBarText">0 / 0 zile</div>
+  </div>
+  <div id="currentDayInfo">Astăzi este ziua X / Y</div>
+  <div id="countdown">Au mai rămas Z zile</div>
+  <div id="calendarContainer"></div>
+
+  <script>
+    const startDate = new Date("2025-05-13");
+    const endDate = new Date("2025-09-23");
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const totalDays = Math.floor((endDate - startDate) / (1000 * 60 * 60 * 24)) + 1;
+    const daysPassed = Math.floor((today - startDate) / (1000 * 60 * 60 * 24));
+    const currentDay = daysPassed + 1;
+    const daysLeft = Math.max(0, totalDays - currentDay);
+
+    const percent = Math.min(100, Math.floor((daysPassed / totalDays) * 100));
+    document.getElementById("progressBarInner").style.width = percent + "%";
+    document.getElementById("progressBarText").textContent = `${daysPassed} / ${totalDays} zile`;
+
+    document.getElementById("currentDayInfo").textContent = `Astăzi este ziua ${currentDay} / ${totalDays}`;
+    document.getElementById("countdown").textContent = `Au mai rămas ${daysLeft} zile`;
+
+    // Proverbe internaționale
+    const proverbs = [
+      "Even a broken clock is right twice a day.",
+      "The best time to plant a tree was 20 years ago. The second best time is now.",
+      "Smooth seas do not make skillful sailors.",
+      "A lion does not lose sleep over the opinion of sheep.",
+      "When the winds of change blow, some build walls, others build windmills.",
+      "Don't let the perfect be the enemy of the good.",
+      "The palest ink is better than the best memory. – Chinese proverb",
+      "You can’t wake a person who is pretending to be asleep. – Navajo proverb",
+      "Wisdom is like fire. People take it from others. – Hema proverb (Congo)",
+      "A single bracelet does not jingle. – Congolese proverb",
+      "He who learns, teaches. – Ethiopian proverb",
+      "However long the night, the dawn will break. – African proverb",
+      "If you want to go fast, go alone. If you want to go far, go together. – African proverb",
+      "Don't set sail on someone else's star. – African proverb",
+      "One finger cannot lift a pebble. – Hopi proverb",
+      "No matter how long the winter, spring is sure to follow. – Guinean proverb",
+      "A man grows most tired while standing still. – Chinese proverb",
+      "Better a diamond with a flaw than a pebble without. – Chinese proverb",
+      "An inch of time is worth an inch of gold. – Chinese proverb",
+      "Dig the well before you are thirsty. – Chinese proverb",
+      "Fall seven times, stand up eight. – Japanese proverb",
+      "Vision without action is a daydream. Action without vision is a nightmare. – Japanese proverb",
+      "A single arrow is easily broken, but not ten in a bundle. – Japanese proverb",
+      "When the character of a man is not clear to you, look at his friends. – Japanese proverb",
+      // ... poți adăuga mai multe
+    ];
+
+    const proverbElement = document.createElement("div");
+    proverbElement.style.fontStyle = "italic";
+    proverbElement.style.fontSize = "18px";
+    proverbElement.style.textAlign = "center";
+    proverbElement.style.marginTop = "10px";
+    proverbElement.style.padding = "0 15px";
+    proverbElement.style.color = "#2d4d2d";
+
+    if (currentDay >= 1 && currentDay <= proverbs.length) {
+      proverbElement.textContent = `"${proverbs[currentDay - 1]}"`;
+    } else {
+      proverbElement.textContent = "Proverbul zilei nu este disponibil.";
+    }
+
+    document.getElementById("currentDayInfo").after(proverbElement);
+
+    // Calendar
+    const calendarContainer = document.getElementById("calendarContainer");
+    const monthNames = ["Ianuarie", "Februarie", "Martie", "Aprilie", "Mai", "Iunie", "Iulie", "August", "Septembrie"];
+    const weekdays = ["Lun", "Mar", "Mie", "Joi", "Vin", "Sâm", "Dum"];
+
+    let date = new Date(startDate);
+    let currentMonth = -1;
+    let calendarGrid;
+
+    while (date <= endDate) {
+      if (date.getMonth() !== currentMonth) {
+        currentMonth = date.getMonth();
+        const monthSection = document.createElement("div");
+        monthSection.className = "month-section";
+        const monthTitle = document.createElement("h2");
+        monthTitle.textContent = monthNames[currentMonth];
+        monthSection.appendChild(monthTitle);
+        calendarGrid = document.createElement("div");
+        calendarGrid.className = "calendar";
+
+        weekdays.forEach(day => {
+          const weekday = document.createElement("div");
+          weekday.className = "weekday";
+          weekday.textContent = day;
+          calendarGrid.appendChild(weekday);
+        });
+
+        const offset = (date.getDay() + 6) % 7;
+        for (let i = 0; i < offset; i++) {
+          const empty = document.createElement("div");
+          calendarGrid.appendChild(empty);
+        }
+
+        monthSection.appendChild(calendarGrid);
+        calendarContainer.appendChild(monthSection);
+      }
+
+      const dayBox = document.createElement("div");
+      dayBox.classList.add("day");
+      dayBox.textContent = date.getDate();
+
+      if (date < today) {
+        dayBox.classList.add("past");
+      } else if (date.getTime() === today.getTime()) {
+        dayBox.classList.add("today");
+      }
+
+      calendarGrid.appendChild(dayBox);
+      date.setDate(date.getDate() + 1);
+    }
+  </script>
+</body>
+</html>
